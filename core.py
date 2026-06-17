@@ -161,13 +161,13 @@ async def train():
         err = step_4(activated)
         step_5_6(err)
 
-        if curr == len(data) - 1:
-            error_mean = mean(errors[:-len(data):-1])
-            print(f"média da época {math.floor(len(errors)/len(data))}: {error_mean}")
+        if curr == 0:
+            error_mean = mean(errors[-len(data):])
+            print(f"média da época {len(errors) // len(data)}: {error_mean}")
             random.shuffle(data)
+        
             if error_mean < config.THRESHOLD:
                 break
-
         print('')
         on_next_gen()
 

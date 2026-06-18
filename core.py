@@ -5,8 +5,6 @@ Cada função step_%d corresponde a um passo a passo do algoritmo de treinamento
 
 Com exceção da função step_5_6 em que eu mesclei os dois passos em uma única
 pois fazia mas sentido.
-
-
 """
 
 
@@ -16,7 +14,6 @@ import config
 import os
 import random
 import asyncio
-import math
 
 def nothing():
     """
@@ -28,25 +25,25 @@ def nothing():
 class training_data:
     """
     Os dados de treinamento ficam armazenados em arquivos de texto separados
-    a função load_data ler esses arquivos e armazenam eles como uma 
+    a função load_data ler esses arquivos e carregam eles como uma 
     lista de training_data
     """
     def __init__(self, x: NDArray[np.float64], y: tuple[float, float]):
         self.x = x
         self.y = y
 
-# a matriz que armazena os dados de treinamento seguido para o índice do dado
+# a lista que armazena os dados de treinamento seguido para o índice do dado
 # sendo utilizado atualmente.
 data: list[training_data] = []
 curr = 0;
 
-# A cada geração on_next_gen é chamado, na versão terminal um callback que faz nada
-# é chamado, porém na versão com GUI, um callback especial é chamado mandando
-# um sinal para o resto da aplicação que ocorreu uma mudançã de geração
+# A cada geração on_next_gen é chamado, na versão terminal um callback que faz nada.
+# Porém na versão com GUI, um callback especial é chamado mandando
+# um evento para o resto da aplicação que ocorreu uma mudança de geração
 
 on_next_gen = nothing
 
-# matriz contendo os erros de todas as gerações
+# lista contendo os erros de todas as gerações
 errors: list[float] = []
 weights: tuple[NDArray[np.float64], NDArray[np.float64]] # as sinapsaes
 
@@ -63,6 +60,13 @@ def load_data():
                 x_str = buffer.read()
                 x_str = x_str.strip()
 
+                # eu fiz um truque aqui para não explicitamente fazer o parse da matriz.
+                # a função np.matrix pode aceitar uma string exatamente no mesmo formato
+                # como foi declarado no arquivo.
+
+                # nessa linha eu só estou removendo o último ;
+                # se eu não tiver removido, o construtor teria interpretado uma matriz 
+                # de 3 linhas tendo 4 linhas.
                 if x_str.endswith(";"):
                     x_str = x_str[:-1]
 
@@ -93,7 +97,7 @@ def mean(values):
 
 """
 Aqui está o passo a passo, mapeados para as etapas de treinamento
-vistas em aula
+vistas em aula.
 """
 
 def step_1() -> None:
@@ -106,7 +110,7 @@ def step_2() -> tuple[float, float]:
 
     print("Geração", len(errors))
     inputs = data[curr].x
-    
+
     first = np.dot(inputs, weights[0])
     second = np.dot(inputs, weights[1])
 
@@ -162,11 +166,11 @@ async def train():
         step_5_6(err)
 
         if curr == 0:
-            error_mean = mean(errors[-len(data):])
-            print(f"média da época {len(errors) // len(data)}: {error_mean}")
+            epoch_mean = mean(errors[-len(data):]) # pegando os erros da época
+            print(f"média da época {len(errors) // len(data)}: {epoch_mean}")
             random.shuffle(data)
         
-            if error_mean < config.THRESHOLD:
+            if epoch_mean < config.THRESHOLD:
                 break
         print('')
         on_next_gen()

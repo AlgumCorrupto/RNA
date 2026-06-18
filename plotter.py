@@ -2,13 +2,13 @@
 Arquivo da interface gráfica.
 A interface foi feita utilizando QT6.
 
-Existem 3 telas
+Existem 3 views
 - Um emulador de terminal simples.
 - Um plotter dos erros
-- Uma galeria dos dados de treinamento, 
-que pode ser acessado em View/Data
+- Uma galeria dos dados de treinamento, que pode ser acessado em View/Data
 
-Cada uma das telas são classes diferentes. 
+
+Cada uma das telas são classes diferentes.
 Idealmente sendo auto-contidas mas com acesso imediato as variáveis
 e funções disponíveis em core.py.
 """
@@ -26,7 +26,7 @@ from PySide6.QtGui import (
 from PySide6.QtWidgets import (
     QApplication, QDockWidget, QMainWindow, QGridLayout,
     QPlainTextEdit, QWidget, QVBoxLayout, QLabel, QScrollArea,
-    QSizePolicy, QDialog, QSplitter
+    QSizePolicy, QSplitter
 )
 
 import threading
@@ -63,7 +63,7 @@ class SignalingStream(QObject):
 class AppState(QObject):
     """
     Classe utilitária que implementa algumas funcionalidades básicas
-    compartilhadas da aplicação, todos os widgets importantes tem acesso 
+    compartilhadas da aplicação, todos as views importantes tem acesso 
     a uma única instância dessa classe.
     """
     _training: bool
@@ -252,7 +252,7 @@ class PlotView(QWidget):
         self.curve.setData(self.x_data, self.y_data)
 
 
-class MainView(QMainWindow):
+class MainWindow(QMainWindow):
     """
     Janela principal, nada de especial.
     """
@@ -310,7 +310,7 @@ def main():
     app = QApplication()
     qt_themes.set_theme('monokai')
 
-    main_wind = MainView()
+    main_wind = MainWindow()
     main_wind.setWindowTitle("Plotter")
 
     main_wind.show()
